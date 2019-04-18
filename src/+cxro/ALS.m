@@ -12,6 +12,7 @@ classdef ALS < cxro.AbstractALS
         cPV_GET_GAP_OF_UNDULATOR_12 = 'SR12U___GDS1PS_AM00'
         cPV_SET_GAP_OF_UNDULATOR_12 = 'cmm:ID12_bl_input'
         cPV_GET_CURRENT_OF_RING = 'cmm:beam_current'
+        cPV_GET_OPERATOR_GRANT_OF_UNDULATOR_12 = 'cmm:ID12_opr_grant'
         
         
     end
@@ -21,6 +22,8 @@ classdef ALS < cxro.AbstractALS
         % {ch.psi.jcae.Channels 1x1}
         channelGetCurrentOfRing
         channelGetGapOfUndulator12
+        channelSetGapOfUndulator12
+        channelGetOperatorGrantOfUndulator12
         
         
     end
@@ -47,7 +50,7 @@ classdef ALS < cxro.AbstractALS
             
             properties = java.util.Properties();
             properties.setProperty('EPICS_CA_ADDR_LIST', '131.243.90.255');
-            context = ch.psi.jcae.Context(this.properties);
+            context = ch.psi.jcae.Context(properties);
             
             descriptor = ch.psi.jcae.ChannelDescriptor(...
                 'double', ...
@@ -69,6 +72,37 @@ classdef ALS < cxro.AbstractALS
                 context, ...
                 descriptor ...
             );
+        
+            descriptor = ch.psi.jcae.ChannelDescriptor(...
+                'double', ...
+                this.cPV_SET_GAP_OF_UNDULATOR_12 ...
+            );
+        
+            this.channelSetGapOfUndulator12 = ch.psi.jcae.Channels.create(...
+                context, ...
+                descriptor ...
+            );
+        
+            descriptor = ch.psi.jcae.ChannelDescriptor(...
+                'double', ...
+                this.cPV_GET_OPERATOR_GRANT_OF_UNDULATOR_12 ...
+            );
+        
+            this.channelGetOperatorGrantOfUndulator12 = ch.psi.jcae.Channels.create(...
+                context, ...
+                descriptor ...
+            );
+        
+        
+        
+        end
+        
+        function disconnect(this)
+            this.channelGetCurrentOfRing.close();
+            this.channelGetGapOfUndulator12.close();
+            this.channelGetOperatorGrantOfUndulator12.close();
+            this.channelSetGapOfUndulator12.close();
+            
         end
         
         % Returns the gap of BL 12 undulator in mm
@@ -78,6 +112,8 @@ classdef ALS < cxro.AbstractALS
             try
                 d = this.channelGetGapOfUndulator12.get();
             catch mE
+                rethrow(mE)
+                fprintf('cxro.ALSVirtual.getGapOfUndulator() Channel.get() error.\n');
                 d = 40.24; % default
             end
         end
@@ -91,6 +127,23 @@ classdef ALS < cxro.AbstractALS
                 return;
             end
             
+            try
+                this.channelSetGapOfUndulator12.put(dVal);
+            catch mE
+                rethrow(mE)
+                fprintf('cxro.ALSVirtual.setGapOfUndulator12 Channel.put() error.\n');
+            end
+            
+        end
+        
+        function d = getOperatorGrantOfUndulator12(this)
+            
+            try
+                d = this.channelGetOperatorGrantOfUndulator12.get();
+            catch mE
+                rethrow(mE)
+                d = 0;
+            end
         end
         
         % Returns the current in the storage ring in A
