@@ -14,7 +14,8 @@ als = cxro.ALS();
 als.getOperatorGrantOfUndulator12()
 
 als.getGapOfUndulator12()
-als.setGapOfUndulator12(40)
+als.setGapOfUndulator12(39.7)
+fprintf('pausing 3 seconds to give undulator time to move\n');
 pause(3);
 als.getGapOfUndulator12()
 als.getCurrentOfRing()
