@@ -62,7 +62,7 @@ classdef ALS < cxro.AbstractALS
                 descriptor ...
             );
         
-
+            %{
             
             descriptor = ch.psi.jcae.ChannelDescriptor(...
                 'double', ...
@@ -94,7 +94,7 @@ classdef ALS < cxro.AbstractALS
                 descriptor ...
             );
             
-        
+            %}
         
         
         end
