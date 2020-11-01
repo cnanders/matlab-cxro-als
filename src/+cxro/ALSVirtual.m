@@ -7,7 +7,7 @@ classdef ALSVirtual < cxro.AbstractALS
     properties (Access = private)
         
         dGapOfUndulator = 40.24;
-        dCurrentOfRing = 0.5;
+        dCurrentOfRing = 500;
     end
     
     methods
@@ -42,7 +42,7 @@ classdef ALSVirtual < cxro.AbstractALS
             this.dGapOfUndulator = dVal;
         end
         
-        % Returns the current in the storage ring in A
+        % Returns the current in the storage ring in mA
         % @return {double 1x1}
         function d = getCurrentOfRing(this)
             d = this.dCurrentOfRing + randn(1,1);
