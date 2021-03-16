@@ -100,10 +100,14 @@ classdef ALS < cxro.AbstractALS
         end
         
         function disconnect(this)
+            try
             this.channelGetCurrentOfRing.close();
-            this.channelGetGapOfUndulator12.close();
-            this.channelGetOperatorGrantOfUndulator12.close();
-            this.channelSetGapOfUndulator12.close();
+%             this.channelGetGapOfUndulator12.close();
+%             this.channelGetOperatorGrantOfUndulator12.close();
+%             this.channelSetGapOfUndulator12.close();
+            catch mE
+                mE
+            end
             
         end
         
@@ -155,6 +159,7 @@ classdef ALS < cxro.AbstractALS
             try
                 d = this.channelGetCurrentOfRing.get();
             catch mE
+                mE
                 rethrow(mE)
                 d = 0;
             end
