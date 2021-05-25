@@ -25,6 +25,8 @@ classdef ALS < cxro.AbstractALS
         channelSetGapOfUndulator12
         channelGetOperatorGrantOfUndulator12
         
+        lDebug = false
+        
         
     end
     
@@ -164,6 +166,21 @@ classdef ALS < cxro.AbstractALS
                 d = 0;
             end
             
+        end
+        
+        function l = hasProp(this, c)
+            
+            l = false;
+            if ~isempty(findprop(this, c))
+                l = true;
+            end
+            
+        end
+        
+        function msg(this, cMsg)
+            if this.lDebug
+                fprintf('%s\n', cMsg);
+            end
         end
         
         
