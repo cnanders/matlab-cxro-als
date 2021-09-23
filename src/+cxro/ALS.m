@@ -1,5 +1,8 @@
 classdef ALS < cxro.AbstractALS
     
+    % Relies on epics and labca which get compiled
+    % for each OS and Matlab version
+    % See Google Doc FIXME 
     
     %UNTITLED Summary of this class goes here
     %   Detailed explanation goes here
@@ -47,6 +50,12 @@ classdef ALS < cxro.AbstractALS
         % accessing each desired process variable (PV)
         function connect(this)
             
+            
+            % NEW
+            
+            return;
+            
+            % OLD
             
             properties = java.util.Properties();
             properties.setProperty('EPICS_CA_ADDR_LIST', '131.243.90.255');
@@ -100,6 +109,10 @@ classdef ALS < cxro.AbstractALS
         end
         
         function disconnect(this)
+            
+            return
+            
+            
             try
             this.channelGetCurrentOfRing.close();
 %             this.channelGetGapOfUndulator12.close();
@@ -114,6 +127,11 @@ classdef ALS < cxro.AbstractALS
         % Returns the gap of BL 12 undulator in mm
         % @return {double 1x1}
         function d = getGapOfUndulator12(this)
+            
+            d = lcaGet(this.cPV_GET_GAP_OF_UNDULATOR_12);
+            return;
+            
+            % OLD 
             
             try
                 d = this.channelGetGapOfUndulator12.get();
@@ -155,6 +173,10 @@ classdef ALS < cxro.AbstractALS
         % Returns the current in the storage ring in A
         % @return {double 1x1}
         function d = getCurrentOfRing(this)
+            
+            d = lcaGet(this.cPV_GET_CURRENT_OF_RING);
+                
+            return;
             
             try
                 d = this.channelGetCurrentOfRing.get();
