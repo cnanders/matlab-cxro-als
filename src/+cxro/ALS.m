@@ -30,6 +30,11 @@ classdef ALS < cxro.AbstractALS
         
         lDebug = false
         
+        cPath 
+        
+        
+   
+        
         
     end
     
@@ -45,8 +50,60 @@ classdef ALS < cxro.AbstractALS
             end
             
             this.connect();
+            this.checkEnvironmentVariables();
+            this.checkMatlabPathForLabCA();
             
         end
+        
+        function checkMatlabPathForLabCA(this)
+            
+            c = path;  % matlab path
+            if ~contains(c, 'C:\labca_3_5\bin\windows-x64\labca')
+                error('MATLAB path must contain path to labca matlab files C:\labca_3_5\bin\windows-x64\labca');
+            end
+            
+        end
+        
+        
+        function checkEnvironmentVariables(this)
+            
+            % On Windows 10, set up environment variables the easy way
+            % by typing "environment variables" into the search bar and 
+            % using the GUI.  Can also use setx in the command line but
+            % Its much easier to use the GUI because it lets you do user
+            % variables and system variables
+            
+            ceVars = { ...
+                'EPICS_CA_MAX_ARRAY_BYTES', '250000000', ...
+                'EPICS_CA_ADDR_LIST', '131.243.90.255', ...
+                'EPICS_CA_SERVER_PORT', '5064', ...
+                'EPICS_HOST_ARCH', 'windows-x64', ...
+                'PATH', 'C:\labca_3_5\bin\windows-x64', ...
+                'PATH', 'C:\epics\R3.15.5\base\bin\windows-x64' ...
+            };
+        
+            for k = 1 : 2: length(ceVars)
+                
+                this.msg(sprintf('passed in %s', ceVars{k}));
+                cCmd = sprintf('echo %%%s%%', ceVars{k}); % looks like 'echo %PATH%'
+                [status, cmdout] = system(cCmd);
+
+                if ~contains(cmdout, ceVars{k+1})
+                    cMsg = [ ...
+                        sprintf('Environment variable %s', ceVars{k}), ...
+                        sprintf(' must be set to %s before MATLAB is launched.', ceVars{k+1}), ...
+                        sprintf('Type "environment variables" in start menu to edit OR'), ...
+                        sprintf(' Open a command prompt and run setx %s "%s" and restart MATLAB', ceVars{k}, ceVars{k+1}) ...
+                    ];
+                    error(cMsg);
+                end
+                
+                
+            end
+                
+               
+        end
+        
         
         % Sets up Channel Access (CA) context and initializes channels for 
         % accessing each desired process variable (PV)
@@ -149,10 +206,16 @@ classdef ALS < cxro.AbstractALS
         function setGapOfUndulator12(this, dVal)
             
             if ~isa(dVal, 'double')
-                fprintf('cxro.ALSVirtual.setGapOfUndulator12 input must be double.\n');
+                fprintf('cxro.ALS.setGapOfUndulator12 input must be double.\n');
                 return;
             end
             
+           
+            lcaPut(this.cPV_SET_GAP_OF_UNDULATOR_12, dVal);
+            
+            return
+            
+            % OLD
             try
                 this.channelSetGapOfUndulator12.put(dVal);
             catch mE
